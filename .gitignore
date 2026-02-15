@@ -1,22 +1,6 @@
-# Environment variables
 .env
-
-# Django
+venv/
 db.sqlite3
+staticfiles/
 __pycache__/
 *.pyc
-
-# Virtual environment
-venv/
-env/
-
-# Static files
-staticfiles/
-
-# IDE
-.vscode/
-.idea/
-
-# OS files
-.DS_Store
-Thumbs.db

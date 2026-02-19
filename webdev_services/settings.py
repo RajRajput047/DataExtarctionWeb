@@ -1,51 +1,32 @@
 import os
+import dj_database_url
 from pathlib import Path
-from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'webdev_services/static']  # adjust if needed
+# --- SECURITY ---
+# On Render, you will set this in the 'Environment' tab
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-key-123')
 
+# False by default for safety; set to True in Render Env if needed
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# Load .env
-load_dotenv(BASE_DIR / '.env')
+ALLOWED_HOSTS = ['*'] # Or ['.onrender.com', 'localhost', '127.0.0.1']
 
-
-SECRET_KEY = os.getenv('SECRET_KEY')
-
-DEBUG = os.getenv('DJANGO_ENV') != 'production'
-
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] if DEBUG else ['yourdomain.com']
-
-ROOT_URLCONF = 'webdev_services.urls'
-WSGI_APPLICATION = 'webdev_services.wsgi.application'
-
-
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'website',
-]
-
+# --- DATABASE (Neon.tech) ---
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-    }
+    'default': dj_database_url.config(
+        # Fallback to local postgres if DATABASE_URL isn't set
+        default='postgresql://user:password@localhost:5432/your_local_db',
+        conn_max_age=600
+    )
 }
 
+# --- MIDDLEWARE ---
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',  # must be before auth
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Essential for CSS/JS
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -53,23 +34,28 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'website' / 'templates'],  # project templates
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
+# --- STATIC & MEDIA (Cloudinary) ---
+# Install: pip install django-cloudinary-storage cloudinary
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'cloudinary_storage', # Add this
+    'django.contrib.staticfiles',
+    'cloudinary',         # Add this
+    'website',
 ]
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Cloudinary Setup for persistent images
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

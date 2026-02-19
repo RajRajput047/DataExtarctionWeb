@@ -16,9 +16,9 @@ ALLOWED_HOSTS = ['*'] # Or ['.onrender.com', 'localhost', '127.0.0.1']
 # --- DATABASE (Neon.tech) ---
 DATABASES = {
     'default': dj_database_url.config(
-        # Fallback to local postgres if DATABASE_URL isn't set
-        default='postgresql://user:password@localhost:5432/your_local_db',
-        conn_max_age=600
+        default=os.environ.get("DATABASE_URL"),
+        conn_max_age=600,
+        ssl_require=True
     )
 }
 
@@ -42,12 +42,15 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary_storage', # Add this
     'django.contrib.staticfiles',
-    'cloudinary',         # Add this
+
+    # Cloudinary apps
+    'cloudinary',
+    'cloudinary_storage',
+
+    # Your app
     'website',
 ]
-
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

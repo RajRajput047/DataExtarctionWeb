@@ -7,7 +7,7 @@ from .models import ContactLead
 
 import os
 import json
-import openai
+
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -42,7 +42,7 @@ def contact(request):
 
 
 # Make sure you set OPENAI_API_KEY in your environment variables
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 
 
 

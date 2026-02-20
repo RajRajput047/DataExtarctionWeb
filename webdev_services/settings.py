@@ -6,6 +6,10 @@ import dj_database_url
 # BASE
 # --------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
+WHITENOISE_KEEP_ONLY_HASHED_FILES = True
+STATICFILES_DIRS = [
+    BASE_DIR / "static", 
+]
 
 # --------------------------------------------------
 # SECURITY

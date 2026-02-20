@@ -13,6 +13,8 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['*'] # Or ['.onrender.com', 'localhost', '127.0.0.1']
 
+ROOT_URLCONF = 'web_service.urls'
+
 # --- DATABASE (Neon.tech) ---
 DATABASES = {
     'default': dj_database_url.config(

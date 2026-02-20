@@ -62,8 +62,8 @@ MIDDLEWARE = [
 # --------------------------------------------------
 # URLS & WSGI
 # --------------------------------------------------
-ROOT_URLCONF = "web_service.urls"
-WSGI_APPLICATION = "web_service.wsgi.application"
+ROOT_URLCONF = 'webdev_services.urls'
+WSGI_APPLICATION = 'webdev_services.wsgi.application'
 
 # --------------------------------------------------
 # TEMPLATES (REQUIRED)
